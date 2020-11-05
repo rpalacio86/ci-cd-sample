@@ -2,11 +2,18 @@
   "name": "helloworld",
   "version": "1.0.0",
   "description": "Test the Bitbucket CI/CD platforms",
+  "repository": {
+    "url": "https://github.com/rpalacio86/ci-cd-sample.git",
+    "type": "git"
+  },
   "main": "server.js",
   "scripts": {
     "test": "mocha"
   },
-  "author": "",
+  "author": {
+    "name": "Raul Palacio",
+    "email": "rpalacio86@gmail.com"
+  },
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1"
