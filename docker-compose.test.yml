@@ -1,0 +1,8 @@
+version: '3.8'
+
+services: 
+  sut:
+    build: .
+    environment: 
+      NODE_ENV: test
+    command: npm test
