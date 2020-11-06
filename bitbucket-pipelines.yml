@@ -26,12 +26,15 @@ pipelines:
             # - docker push $IMAGE_NAME
       - step:
           name: Build and deploy to stage
+          caches:
+            - docker
           services:
             - docker
           script:
             # Build the image
             - docker-compose build api-prod
             # Install heroku cli
+            - apt-get update; apt-get install curl
             - curl https://cli-assets.heroku.com/install.sh | sh
             # Push docker image to heroku registry 
             - heroku container:login
