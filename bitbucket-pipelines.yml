@@ -6,17 +6,35 @@
 image: docker/compose:latest
 
 pipelines:
-  default:
-    - step:
-        services:
-          - docker
-        script: # Modify the commands below to build your repository.
-          # Set $DOCKER_HUB_USERNAME and $DOCKER_HUB_PASSWORD as environment variables in repository settings
-          - export IMAGE_NAME=rpalacio86/sampleci:$BITBUCKET_COMMIT
+  branches:
+    master:
+      - step:
+          name: Build and Test
+          caches:
+            - docker
+          services:
+            - docker
+          script: # Modify the commands below to build your repository.
+            # Set $DOCKER_HUB_USERNAME and $DOCKER_HUB_PASSWORD as environment variables in repository settings
+            - export IMAGE_NAME=amdocs/sampleci:$BITBUCKET_COMMIT
 
-          # build the Docker image (this will use the Dockerfile in the root of the repo)
-          - docker-compose --file docker-compose.test.yml build
-          # authenticate with the Docker Hub registry
-          - docker-compose --file docker-compose.test.yml run sut
-          # push the new Docker image to the Docker registry
-          # - docker push $IMAGE_NAME
+            # build the Docker image (this will use the Dockerfile in the root of the repo)
+            - docker-compose --file docker-compose.test.yml build
+            # authenticate with the Docker Hub registry
+            - docker-compose --file docker-compose.test.yml run sut
+            # push the new Docker image to the Docker registry
+            # - docker push $IMAGE_NAME
+      - step:
+          name: Build and deploy to stage
+          services:
+            - docker
+          script:
+            # Build the image
+            - docker-compose build api-prod
+            # Install heroku cli
+            - curl https://cli-assets.heroku.com/install.sh | sh
+            # Push docker image to heroku registry 
+            - heroku container:login
+            - heroku container:push amdocs/sampleci -a $HEROKU_STAGE
+            # Deploy the image pushed
+            - heroku container:release amdocs/sampleci -a $HEROKU_STAGE
