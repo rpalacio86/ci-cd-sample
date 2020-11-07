@@ -3,7 +3,7 @@
 # Only use spaces to indent your .yml configuration.
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment.
-image: docker/compose:latest
+image: rpalacio86/compose-heroku:latest
 
 pipelines:
   branches:
@@ -33,9 +33,6 @@ pipelines:
           script:
             # Build the image
             - docker-compose build api-prod
-            # Install heroku cli
-            - apt-get update; apt-get install curl
-            - curl https://cli-assets.heroku.com/install.sh | sh
             # Push docker image to heroku registry 
             - heroku container:login
             - heroku container:push amdocs/sampleci -a $HEROKU_STAGE
