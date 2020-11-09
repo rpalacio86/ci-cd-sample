@@ -34,7 +34,8 @@ pipelines:
             # Build the image
             - docker-compose build api-prod
             # Push docker image to heroku registry 
+            - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+            - docker tag amdocs/sampleci registry.heroku.com/$HEROKU_STAGE/web
             - heroku container:login
-            - heroku container:push amdocs/sampleci -a $HEROKU_STAGE
             # Deploy the image pushed
-            - heroku container:release amdocs/sampleci -a $HEROKU_STAGE
+            - heroku container:release web -a $HEROKU_STAGE
