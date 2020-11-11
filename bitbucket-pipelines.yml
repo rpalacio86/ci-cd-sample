@@ -42,3 +42,22 @@ pipelines:
             - heroku container:login
             # Deploy the pushed image
             - heroku container:release web -a $HEROKU_STAGE
+    production:
+      - step:
+          name: Build and deploy to stage
+          caches:
+            - docker
+          services:
+            - docker
+          script:
+            # Build the image
+            - docker-compose build api-prod
+            # Push docker image to heroku registry 
+            - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+            # Rename image to match heroku requirement
+            - docker tag amdocs/sampleci registry.heroku.com/$HEROKU_PROD/web
+            # Push the image to the Heroku registry
+            - docker push registry.heroku.com/$HEROKU_PROD/web
+            - heroku container:login
+            # Deploy the pushed image
+            - heroku container:release web -a $HEROKU_PROD
